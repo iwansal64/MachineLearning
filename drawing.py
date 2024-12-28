@@ -111,10 +111,17 @@ def main():
                         
             #? Keyboard event
             elif event.type == pygame.KEYDOWN:
+                #? Append data
                 if event.unicode in string.digits:
                     current_datasets[event.unicode].append(current_pixels)
+                    current_datasets[event.unicode].append(current_pixels)
+                    print(f"Successfully Appending Data to number: {event.unicode}!")
+                #? Save dataset
                 elif event.key == pygame.K_s:
                     save_dataset()
+                #? Reset pixels
+                elif event.key == pygame.K_r:
+                    current_pixels = [[False for j in range(PIXEL_HORIZONTAL)] for i in range(PIXEL_VERTICAL)]
 
         if pressing_pixels:
             touch_pixel(pygame.mouse.get_pos(), True, is_activating_pixel)
