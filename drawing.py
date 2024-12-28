@@ -38,7 +38,7 @@ def main():
     # Datasets initializations
     current_datasets = {"1":[],"2":[],"3":[],"4":[],"5":[],"6":[],"7":[],"8":[],"9":[],"0":[]}
     if IMPORT_FROM_DATASET:
-        with open(DATASET_FILE_PATH) as f:
+        with open(DATASET_FILE_PATH, "r+") as f:
             current_datasets = json.loads(f.read())
         
     # Current pixel (used to keep track of user choosen pixel)
