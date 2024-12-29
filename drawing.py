@@ -1,4 +1,7 @@
+'''This python program is used to draw through pixels and put into dataset'''
 import pygame, sys, math, string, json
+from variables import DATASET_FILE_PATH
+from typing import Dict, List
 
 #? VARIABLE DEFINITIONS
 WINDOW_WIDTH = 800                                                                      # Window Width
@@ -8,11 +11,11 @@ PIXEL_HORIZONTAL = 10                                                           
 PIXEL_VERTICAL = 10                                                                     # How many pixels on the screen at y axis
 PIXEL_DIMENSIONS = (PIXEL_HORIZONTAL, PIXEL_VERTICAL)                                   # The dimension of the pixel board
 
-PIXEL_WIDTH = 60                                                                        # The width of one pixel
-PIXEL_HEIGHT = 60                                                                       # The height of one pixel
+PIXEL_WIDTH = 50                                                                        # The width of one pixel
+PIXEL_HEIGHT = 50                                                                       # The height of one pixel
 PIXEL_SIZE = (PIXEL_WIDTH, PIXEL_HEIGHT)                                                # The size of one pixel (width, height)
 
-PIXEL_GAP = 5                                                                           # The gap between pixels
+PIXEL_GAP = 0                                                                           # The gap between pixels
 OFFSET_X = (WINDOW_WIDTH // 2) - ((PIXEL_WIDTH + PIXEL_GAP) * PIXEL_HORIZONTAL // 2)    # The offset of pixel board horizontally (used for centering)
 OFFSET_Y = (WINDOW_HEIGHT // 2) - ((PIXEL_HEIGHT + PIXEL_GAP) * PIXEL_VERTICAL // 2)    # The offset of pixel board vertically
 
@@ -20,9 +23,7 @@ PIXEL_CHOOSEN_COLOR = "black"                                                   
 PIXEL_NORMAL_COLOR = "grey"                                                             # A normal pixel color (not activated pixel)
 BACKGROUND_COLOR = "white"                                                              # Background color
 
-IMPORT_FROM_DATASET = True                                                              # Import dataset from file? 
-CURRENT_DIRECTORY = "\\".join(__file__.split("\\")[:-1])+"\\"                           # Current directory (used for creating dataset file path variable)
-DATASET_FILE_PATH = CURRENT_DIRECTORY+"dataset.json"                                    # Dataset file path
+IMPORT_FROM_DATASET = True                                                              # Import dataset from file?
 ASK_BEFORE_QUIT = True                                                                  # Ask before quit. If this value is true before quit it'll prompt to terminal wheter you want to save or nah.
 
 previous_pixel = []                                                                     # Previous pixel coordinate (used for preventing double click of a pixel)
@@ -36,13 +37,13 @@ def main():
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     
     # Datasets initializations
-    current_datasets = {"1":[],"2":[],"3":[],"4":[],"5":[],"6":[],"7":[],"8":[],"9":[],"0":[]}
+    current_datasets: Dict[str, List[List[int]]] = {"1":[],"2":[],"3":[],"4":[],"5":[],"6":[],"7":[],"8":[],"9":[],"0":[]}
     if IMPORT_FROM_DATASET:
         with open(DATASET_FILE_PATH, "r+") as f:
             current_datasets = json.loads(f.read())
         
     # Current pixel (used to keep track of user choosen pixel)
-    current_pixels = [[False for j in range(PIXEL_HORIZONTAL)] for i in range(PIXEL_VERTICAL)]
+    current_pixels = [[0 for j in range(PIXEL_HORIZONTAL)] for i in range(PIXEL_VERTICAL)]
     # Pressing pixel (used to keep track of the mouse condition. (is it pressing or not))
     pressing_pixels = False
     # Is erasing pixel (used to keep track of wheter user is currently activating or deactivating pixel)
@@ -73,9 +74,9 @@ def main():
                 y_index = math.floor(position[1] / (PIXEL_HEIGHT + PIXEL_GAP))
 
                 if previous_pixel != [x_index, y_index] and (current_pixels[y_index][x_index] != mode or not limit):
-                    current_pixels[y_index][x_index] = not current_pixels[y_index][x_index]
+                    current_pixels[y_index][x_index] = int(not bool(current_pixels[y_index][x_index]))
                     previous_pixel = [x_index, y_index]
-                    return 1 if current_pixels[y_index][x_index] else 0
+                    return current_pixels[y_index][x_index]
 
         return -1
 
@@ -114,14 +115,13 @@ def main():
                 #? Append data
                 if event.unicode in string.digits:
                     current_datasets[event.unicode].append(current_pixels)
-                    current_datasets[event.unicode].append(current_pixels)
                     print(f"Successfully Appending Data to number: {event.unicode}!")
                 #? Save dataset
                 elif event.key == pygame.K_s:
                     save_dataset()
                 #? Reset pixels
                 elif event.key == pygame.K_r:
-                    current_pixels = [[False for j in range(PIXEL_HORIZONTAL)] for i in range(PIXEL_VERTICAL)]
+                    current_pixels = [[0 for j in range(PIXEL_HORIZONTAL)] for i in range(PIXEL_VERTICAL)]
 
         if pressing_pixels:
             touch_pixel(pygame.mouse.get_pos(), True, is_activating_pixel)
@@ -137,7 +137,7 @@ def main():
         #? Update display
         pygame.display.flip()
 
-        clock.tick(60)
+        clock.tick(90)
         
         if not running:
             pygame.quit()

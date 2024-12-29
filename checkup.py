@@ -1,7 +1,5 @@
 import json
-
-CURRENT_DIRECTORY = "\\".join(__file__.split("\\")[:-1])+"\\"                           # Current directory (used for creating dataset file path variable)
-DATASET_FILE_PATH = CURRENT_DIRECTORY+"dataset.json"                                    # Dataset file path
+from variables import DATASET_FILE_PATH
 
 datasets = {}
 with open(DATASET_FILE_PATH, "r+") as f:
@@ -10,7 +8,6 @@ with open(DATASET_FILE_PATH, "r+") as f:
 print("-------- DATASETS INFORMATIONS --------")
 total = 0
 for key, value in datasets.items():
-    print(f"{key}\t: {len(value)} datas")
+    print(f"{key}\t: {len(value)} data")
     total += len(value)
-print(f"Total\t: {total} datas")
-    
+print(f"Total\t: {total} data")
